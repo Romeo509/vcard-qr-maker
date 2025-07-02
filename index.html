@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Contact QR Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+    }
+    #qrcode {
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Contact QR Generator</h2>
+
+<form id="contactForm">
+  <input type="text" id="fullName" placeholder="Full Name" required>
+  <input type="tel" id="phone" placeholder="Phone Number" required>
+  <input type="email" id="email" placeholder="Email Address" required>
+  <input type="text" id="org" placeholder="Organization (optional)">
+  <input type="text" id="title" placeholder="Title (optional)">
+  <button type="submit">Generate QR</button>
+</form>
+
+<div id="qrcode"></div>
+
+<script>
+  const form = document.getElementById("contactForm");
+  const qrcodeDiv = document.getElementById("qrcode");
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    qrcodeDiv.innerHTML = ""; // clear previous QR
+
+    const fullName = document.getElementById("fullName").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const org = document.getElementById("org").value.trim();
+    const title = document.getElementById("title").value.trim();
+
+    const nameParts = fullName.split(" ");
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
+
+    const vcard = 
+`BEGIN:VCARD
+VERSION:3.0
+N:${lastName};${firstName};;;
+FN:${fullName}
+TEL:${phone}
+EMAIL:${email}
+${org ? `ORG:${org}` : ""}
+${title ? `TITLE:${title}` : ""}
+END:VCARD`;
+
+    new QRCode(qrcodeDiv, {
+      text: vcard,
+      width: 256,
+      height: 256,
+    });
+  });
+</script>
+
+</body>
+</html>
